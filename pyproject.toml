@@ -1,0 +1,39 @@
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".venv", "notebooks", "captures", "exports", "logs", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "ANN", "D"]
+ignore = [
+    "D203",  # one-blank-line-before-class (conflicts with D211)
+    "D213",  # multi-line-summary-second-line (conflicts with D212)
+    "D107",  # missing docstring in __init__ (documented on the class)
+    "ANN401",  # Any in signatures is acceptable for injected factories
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "ANN"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "slow: runs the real EasyOCR model (downloads ~100 MB on first run)",
+    "mysql: requires a reachable MySQL server (see tests/test_db_manager.py)",
+    "gui: requires a Tk display",
+]
+filterwarnings = [
+    # Third-party deprecations inside torch/easyocr that we cannot fix from here.
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore:.*pin_memory.*not supported on MPS.*:UserWarning",
+    "ignore:.*quantize_per_tensor.*:UserWarning",
+    "ignore:.*torch.ao.quantization.*:DeprecationWarning",
+    "ignore:.*pt2e quantization.*:DeprecationWarning",
+    "ignore:.*quantize_dynamic.*:DeprecationWarning",
+    "ignore::DeprecationWarning:torch.*",
+    "ignore::FutureWarning:torch.*",
+]

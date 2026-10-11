@@ -1,0 +1,7 @@
+# Developer extras: linting and the demo notebook.
+-r requirements.txt
+
+ruff==0.16.8
+nbformat==5.11.1
+nbconvert==7.17.1
+ipykernel==7.3.0

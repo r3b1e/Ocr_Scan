@@ -3,11 +3,13 @@
 .venv/
 venv/
 
-# Runtime output
+# Runtime output (data/ keeps the drug lexicon and gold set tracked)
 captures/
 exports/
 logs/
-data/
+data/*
+!data/drug_lexicon_in.csv
+!data/gold/
 
 # Python
 __pycache__/
@@ -22,3 +24,9 @@ notebooks/.ipynb_checkpoints/
 .DS_Store
 .vscode/
 .idea/
+
+# remainRX website (separate project living next to the service)
+web/node_modules/
+web/dist/
+web/.env
+web/.env.*

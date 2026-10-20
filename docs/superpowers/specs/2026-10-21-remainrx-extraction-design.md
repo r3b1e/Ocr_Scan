@@ -53,47 +53,53 @@ Two models. `RawPrescription` is what the vision model fills; `PrescriptionExtra
 enriched API response.
 
 ```python
-Form = Literal["tablet", "capsule", "syrup", "injection", "drops", "cream", "inhaler",
-               "powder", "other"]
+Form = Literal[
+    "tablet", "capsule", "syrup", "injection", "drops", "cream", "inhaler", "powder", "other"
+]
 Timing = Literal["before_food", "after_food", "with_food", "bedtime", "empty_stomach", "any"]
 Slot = Literal["morning", "afternoon", "evening", "night"]
 Status = Literal["ok", "corrected", "unverified"]
 
+
 class RawMedication(BaseModel):
-    name: str                      # brand or generic exactly as written
-    strength: str | None           # "500 mg", "5 ml"
+    name: str  # brand or generic exactly as written
+    strength: str | None  # "500 mg", "5 ml"
     form: Form | None
-    dose: str | None               # "1", "1/2", "2 tsp", "5 ml"
-    frequency_text: str | None     # exactly as written: "1-0-1", "BD", "twice daily"
-    timing_text: str | None        # "after food", "A/F", "HS"
-    duration_text: str | None      # "5 days", "x 1 week"
+    dose: str | None  # "1", "1/2", "2 tsp", "5 ml"
+    frequency_text: str | None  # exactly as written: "1-0-1", "BD", "twice daily"
+    timing_text: str | None  # "after food", "A/F", "HS"
+    duration_text: str | None  # "5 days", "x 1 week"
     instructions: str | None
-    confidence: float              # model's own 0-1 estimate of legibility
+    confidence: float  # model's own 0-1 estimate of legibility
+
 
 class RawPrescription(BaseModel):
     patient_name: str | None
     patient_age: str | None
     doctor_name: str | None
-    prescribed_on: str | None      # ISO date if readable, else null
+    prescribed_on: str | None  # ISO date if readable, else null
     medications: list[RawMedication]
-    notes: str | None              # diagnosis / advice lines, verbatim
+    notes: str | None  # diagnosis / advice lines, verbatim
+
 
 class Frequency(BaseModel):
-    pattern: str | None            # normalised "1-0-1" style when applicable
+    pattern: str | None  # normalised "1-0-1" style when applicable
     times_per_day: int | None
     slots: list[Slot]
-    interval_hours: int | None     # q8h -> 8
-    as_needed: bool                # SOS
+    interval_hours: int | None  # q8h -> 8
+    as_needed: bool  # SOS
+
 
 class Medication(RawMedication):
-    brand_matched: str | None      # canonical lexicon brand
-    composition: str | None        # from lexicon
+    brand_matched: str | None  # canonical lexicon brand
+    composition: str | None  # from lexicon
     frequency: Frequency
     timing: Timing | None
     duration_days: int | None
     status: Status
-    bbox: list[list[int]] | None   # 4 points in image pixels, when located
+    bbox: list[list[int]] | None  # 4 points in image pixels, when located
     field_status: dict[str, Status]  # per field: name, strength, frequency, timing, duration
+
 
 class PrescriptionExtraction(BaseModel):
     document_id: int | None
@@ -104,7 +110,7 @@ class PrescriptionExtraction(BaseModel):
     medications: list[Medication]
     notes: str | None
     warnings: list[str]
-    backend: str                   # "claude" | "ollama"
+    backend: str  # "claude" | "ollama"
     model: str
     handwritten: bool
     processing_ms: int
@@ -138,11 +144,14 @@ image bytes
 ### 3.1 Extractor interface (`core/extractors/base.py`)
 
 ```python
-class ExtractorError(RuntimeError): """Plain-language failure (auth, network, refusal, bad JSON)."""
+class ExtractorError(RuntimeError):
+    """Plain-language failure (auth, network, refusal, bad JSON)."""
+
 
 class PrescriptionExtractor(Protocol):
     name: str
     model: str
+
     def extract(self, image_jpeg: bytes, ocr_hint: str | None) -> RawPrescription: ...
     def health(self) -> tuple[bool, str]: ...
 ```

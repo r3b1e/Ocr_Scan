@@ -246,6 +246,67 @@ to `captures/` (synthetic 1280×720 input, real EasyOCR on CPU):
 
 ![Annotated capture produced by Scan](docs/screenshots/sample_annotated_capture.png)
 
+---
+
+## remainRX prescription extraction service
+
+The scanner now doubles as the extraction backend for **remainRX**: upload a prescription image
+(printed or handwritten, Indian brand names) and get a validated list of medications ready to
+pre-fill medicine reminders. Design: `docs/superpowers/specs/2026-10-21-remainrx-extraction-design.md`.
+
+### How it works
+
+1. The image is deskewed and denoised, then EasyOCR reads it once to decide printed vs
+   handwritten, to give the vision model a spelling hint, and to find boxes for highlighting.
+2. A vision-language model returns the medications as JSON (`RawPrescription`). Two backends
+   are selectable in `.env`:
+   - `EXTRACTOR_BACKEND=claude` - Claude API with structured outputs (`CLAUDE_MODEL`, default
+     `claude-opus-5-5`; needs `ANTHROPIC_API_KEY`). About one cent per prescription on Opus,
+     far less on `claude-haiku-5-5`.
+   - `EXTRACTOR_BACKEND=ollama` - a local open model through Ollama, fully offline and free
+     (`ollama pull qwen3-vl:4b`; `qwen3-vl:2b` for weaker laptops).
+3. The validation layer repairs and grades every field: the Indian drug lexicon
+   (`data/drug_lexicon_in.csv`, brand -> composition, fuzzy matched), the sig grammar
+   (`1-0-1`, `OD/BD/TDS/QID/HS/SOS`, `A/F B/F AC PC`, `x 5 days`, `Tab./Cap./Syp.`), range checks,
+   and localisation of each value on the image. Each field carries a status: `ok`,
+   `corrected` (changed by validation, original kept in `warnings`) or `unverified`.
+4. Every document, model output and user correction is stored (`documents`, `extractions`,
+   `corrections` tables in MySQL, or SQLite offline) so corrections become evaluation and
+   training data.
+
+**Safety rule for the website:** show each field beside its highlighted box, flag anything
+`unverified` or below `CONFIDENCE_FLAG_THRESHOLD`, and create reminders only after the user
+confirms. The lexicon is a seed list (`source=seed-verify`) and must be reviewed by a pharmacist
+before production use.
+
+### Run the service
+
+```bash
+python -m service                  # http://127.0.0.1:8000  (API_HOST / API_PORT in .env)
+curl -s http://127.0.0.1:8000/health
+curl -s -F "image=@tests/fixtures/sample_rx.jpg" http://127.0.0.1:8000/extract | python -m json.tool
+curl -s -F "image=@rx.jpg" -F "backend=ollama" http://127.0.0.1:8000/extract   # per-call override
+```
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /extract` (multipart `image`, optional `backend`) | returns `PrescriptionExtraction` JSON; `422` bad image, `502` backend failed, `503` backend not configured |
+| `POST /feedback` `{document_id, corrected}` | stores the user-approved JSON |
+| `GET /documents/{id}` / `DELETE /documents/{id}` | review or erase a stored document and its image |
+| `GET /health` | backend readiness, model, lexicon size, database backend, OCR status |
+
+Interactive docs are served at `/docs` (Swagger UI).
+
+### Tests
+
+```bash
+pytest -q                                   # everything except live backend calls
+pytest -m live -s tests/test_live_backends.py   # real Claude / Ollama on the fixture images
+```
+
+Backends are unit-tested with fake clients and recorded responses, so the default suite never
+needs a key, a model download or the network.
+
 ## Architecture
 
 ```

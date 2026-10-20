@@ -17,6 +17,7 @@ from dotenv import dotenv_values
 BASE_DIR: Path = Path(__file__).resolve().parents[1]
 VALID_GPU_MODES: frozenset[str] = frozenset({"auto", "true", "false"})
 VALID_LOG_LEVELS: frozenset[str] = frozenset({"DEBUG", "INFO", "WARNING", "ERROR"})
+VALID_BACKENDS: frozenset[str] = frozenset({"claude", "ollama"})
 _TRUE_VALUES = {"1", "true", "yes", "on"}
 _FALSE_VALUES = {"0", "false", "no", "off"}
 
@@ -45,6 +46,12 @@ def _as_float(value: str | None, default: float, low: float, high: float) -> flo
     if not low <= parsed <= high:
         return default
     return parsed
+
+
+def _as_port(value: str | None, default: int) -> int:
+    """Parse a TCP port in 1..65535, else return `default`."""
+    port = _as_int(value, default, minimum=1)
+    return port if port <= 65535 else default
 
 
 def _as_bool(value: str | None, default: bool) -> bool:
@@ -99,6 +106,17 @@ class Settings:
     audio_enabled: bool = True
     log_level: str = "INFO"
 
+    extractor_backend: str = "claude"
+    claude_model: str = "claude-opus-5-5"
+    ollama_host: str = "http://127.0.0.1:11434"
+    ollama_model: str = "qwen3-vl:4b"
+    extract_max_image_side: int = 1600
+    ocr_hint_for_printed: bool = True
+    confidence_flag_threshold: float = 0.6
+    lexicon_file: Path | None = None
+    api_host: str = "127.0.0.1"
+    api_port: int = 8000
+
     base_dir: Path = BASE_DIR
 
     @property
@@ -127,6 +145,16 @@ class Settings:
         return self.data_dir / "offline_scans.sqlite3"
 
     @property
+    def lexicon_path(self) -> Path:
+        """Indian brand/composition CSV (`LEXICON_PATH`, default `data/drug_lexicon_in.csv`)."""
+        return self.lexicon_file or self.data_dir / "drug_lexicon_in.csv"
+
+    @property
+    def documents_dir(self) -> Path:
+        """Directory for uploaded prescription images."""
+        return self.data_dir / "documents"
+
+    @property
     def language_label(self) -> str:
         """Compact label such as `"en"` or `"en+hi"` stored with each scan."""
         return "+".join(self.ocr_languages)
@@ -143,6 +171,7 @@ class Settings:
         """Build settings from a flat mapping of environment-style keys."""
         defaults = cls()
         model_dir_raw = values.get("OCR_MODEL_DIR")
+        lexicon_raw = values.get("LEXICON_PATH")
         return cls(
             db_host=(values.get("DB_HOST") or defaults.db_host).strip(),
             db_port=_as_int(values.get("DB_PORT"), defaults.db_port, minimum=1),
@@ -170,6 +199,30 @@ class Settings:
             log_level=_as_choice(
                 values.get("LOG_LEVEL"), defaults.log_level, VALID_LOG_LEVELS, upper=True
             ),
+            extractor_backend=_as_choice(
+                values.get("EXTRACTOR_BACKEND"),
+                defaults.extractor_backend,
+                VALID_BACKENDS,
+                upper=False,
+            ),
+            claude_model=(values.get("CLAUDE_MODEL") or defaults.claude_model).strip(),
+            ollama_host=(values.get("OLLAMA_HOST") or defaults.ollama_host).strip().rstrip("/"),
+            ollama_model=(values.get("OLLAMA_MODEL") or defaults.ollama_model).strip(),
+            extract_max_image_side=_as_int(
+                values.get("EXTRACT_MAX_IMAGE_SIDE"), defaults.extract_max_image_side, minimum=256
+            ),
+            ocr_hint_for_printed=_as_bool(
+                values.get("OCR_HINT_FOR_PRINTED"), defaults.ocr_hint_for_printed
+            ),
+            confidence_flag_threshold=_as_float(
+                values.get("CONFIDENCE_FLAG_THRESHOLD"),
+                defaults.confidence_flag_threshold,
+                0.0,
+                1.0,
+            ),
+            lexicon_file=Path(lexicon_raw).expanduser() if lexicon_raw else None,
+            api_host=(values.get("API_HOST") or defaults.api_host).strip(),
+            api_port=_as_port(values.get("API_PORT"), defaults.api_port),
             base_dir=base_dir or BASE_DIR,
         )
 
@@ -189,6 +242,7 @@ class Settings:
             env_key = key.upper()
             if env_key in os.environ:
                 merged[env_key] = os.environ[env_key]
-        if "OCR_MODEL_DIR" in os.environ:
-            merged["OCR_MODEL_DIR"] = os.environ["OCR_MODEL_DIR"]
+        for extra_key in ("OCR_MODEL_DIR", "LEXICON_PATH"):
+            if extra_key in os.environ:
+                merged[extra_key] = os.environ[extra_key]
         return cls.from_mapping(merged, base_dir=base_dir)

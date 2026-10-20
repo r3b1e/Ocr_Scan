@@ -1,0 +1,221 @@
+brand,composition,strengths,form,source
+Dolo,Paracetamol,500 mg|650 mg,tablet,seed-verify
+Crocin,Paracetamol,500 mg|650 mg,tablet,seed-verify
+Calpol,Paracetamol,250 mg/5 ml|500 mg|650 mg,tablet,seed-verify
+Paracip,Paracetamol,500 mg|650 mg,tablet,seed-verify
+Sumo,Nimesulide + Paracetamol,100 mg/325 mg,tablet,seed-verify
+Combiflam,Ibuprofen + Paracetamol,400 mg/325 mg,tablet,seed-verify
+Brufen,Ibuprofen,200 mg|400 mg|600 mg,tablet,seed-verify
+Ibugesic Plus,Ibuprofen + Paracetamol,100 mg/162.5 mg per 5 ml,syrup,seed-verify
+Zerodol,Aceclofenac,100 mg,tablet,seed-verify
+Zerodol-P,Aceclofenac + Paracetamol,100 mg/325 mg,tablet,seed-verify
+Zerodol-SP,Aceclofenac + Paracetamol + Serratiopeptidase,100 mg/325 mg/15 mg,tablet,seed-verify
+Hifenac,Aceclofenac,100 mg,tablet,seed-verify
+Voveran,Diclofenac,50 mg|75 mg,tablet,seed-verify
+Diclomol,Diclofenac + Paracetamol,50 mg/325 mg,tablet,seed-verify
+Flexon,Ibuprofen + Paracetamol,400 mg/325 mg,tablet,seed-verify
+Meftal Spas,Mefenamic Acid + Dicyclomine,250 mg/10 mg,tablet,seed-verify
+Meftal-P,Mefenamic Acid,100 mg/5 ml,syrup,seed-verify
+Naprosyn,Naproxen,250 mg|500 mg,tablet,seed-verify
+Ultracet,Tramadol + Paracetamol,37.5 mg/325 mg,tablet,seed-verify
+Ecosprin,Aspirin,75 mg|150 mg,tablet,seed-verify
+Disprin,Aspirin,325 mg,tablet,seed-verify
+Augmentin,Amoxicillin + Clavulanic Acid,625 mg|1 g|375 mg,tablet,seed-verify
+Moxikind-CV,Amoxicillin + Clavulanic Acid,625 mg|375 mg,tablet,seed-verify
+Clavam,Amoxicillin + Clavulanic Acid,625 mg|375 mg,tablet,seed-verify
+Mox,Amoxicillin,250 mg|500 mg,capsule,seed-verify
+Novamox,Amoxicillin,250 mg|500 mg,capsule,seed-verify
+Azithral,Azithromycin,250 mg|500 mg,tablet,seed-verify
+Azee,Azithromycin,250 mg|500 mg,tablet,seed-verify
+Zithrox,Azithromycin,250 mg|500 mg,tablet,seed-verify
+Taxim-O,Cefixime,100 mg|200 mg,tablet,seed-verify
+Zifi,Cefixime,100 mg|200 mg,tablet,seed-verify
+Cefolac,Cefixime,100 mg|200 mg,tablet,seed-verify
+Ceftum,Cefuroxime,250 mg|500 mg,tablet,seed-verify
+Cefakind,Cefuroxime,250 mg|500 mg,tablet,seed-verify
+Ciplox,Ciprofloxacin,250 mg|500 mg,tablet,seed-verify
+Cifran,Ciprofloxacin,250 mg|500 mg,tablet,seed-verify
+Oflox,Ofloxacin,200 mg|400 mg,tablet,seed-verify
+Zanocin,Ofloxacin,200 mg|400 mg,tablet,seed-verify
+Norflox,Norfloxacin,400 mg,tablet,seed-verify
+O2,Ofloxacin + Ornidazole,200 mg/500 mg,tablet,seed-verify
+Oflomac-OZ,Ofloxacin + Ornidazole,200 mg/500 mg,tablet,seed-verify
+Levoflox,Levofloxacin,250 mg|500 mg,tablet,seed-verify
+Metrogyl,Metronidazole,200 mg|400 mg,tablet,seed-verify
+Flagyl,Metronidazole,200 mg|400 mg,tablet,seed-verify
+Doxy-1,Doxycycline,100 mg,capsule,seed-verify
+Minoz,Minocycline,50 mg|100 mg,tablet,seed-verify
+Althrocin,Erythromycin,250 mg|500 mg,tablet,seed-verify
+Omez,Omeprazole,20 mg|40 mg,capsule,seed-verify
+Ocid,Omeprazole,20 mg,capsule,seed-verify
+Pan,Pantoprazole,40 mg,tablet,seed-verify
+Pan-D,Pantoprazole + Domperidone,40 mg/30 mg,capsule,seed-verify
+Pantocid,Pantoprazole,40 mg,tablet,seed-verify
+Pantop,Pantoprazole,40 mg,tablet,seed-verify
+Razo,Rabeprazole,20 mg,tablet,seed-verify
+Rabekind,Rabeprazole,20 mg,tablet,seed-verify
+Nexpro,Esomeprazole,20 mg|40 mg,tablet,seed-verify
+Rantac,Ranitidine,150 mg|300 mg,tablet,seed-verify
+Aciloc,Ranitidine,150 mg|300 mg,tablet,seed-verify
+Famocid,Famotidine,20 mg|40 mg,tablet,seed-verify
+Digene,Magnesium Hydroxide + Aluminium Hydroxide + Simethicone,,syrup,seed-verify
+Gelusil,Magnesium Hydroxide + Aluminium Hydroxide + Simethicone,,tablet,seed-verify
+Sucral,Sucralfate,1 g|1 g/5 ml,syrup,seed-verify
+Ondem,Ondansetron,4 mg|8 mg,tablet,seed-verify
+Emeset,Ondansetron,4 mg|8 mg,tablet,seed-verify
+Domstal,Domperidone,10 mg,tablet,seed-verify
+Vomistop,Domperidone,10 mg,tablet,seed-verify
+Perinorm,Metoclopramide,10 mg,tablet,seed-verify
+Cyclopam,Dicyclomine + Paracetamol,20 mg/500 mg,tablet,seed-verify
+Colicaid,Simethicone + Dill Oil + Fennel Oil,,drops,seed-verify
+Buscopan,Hyoscine Butylbromide,10 mg,tablet,seed-verify
+Looz,Lactulose,10 g/15 ml,syrup,seed-verify
+Duphalac,Lactulose,10 g/15 ml,syrup,seed-verify
+Cremaffin,Liquid Paraffin + Milk of Magnesia,,syrup,seed-verify
+Sporlac,Lactic Acid Bacillus,,powder,seed-verify
+Econorm,Saccharomyces boulardii,250 mg,powder,seed-verify
+Enterogermina,Bacillus clausii,2 billion/5 ml,syrup,seed-verify
+Vizylac,Lactobacillus,,capsule,seed-verify
+Electral,Oral Rehydration Salts,,powder,seed-verify
+Zinconia,Zinc,20 mg,tablet,seed-verify
+Cetzine,Cetirizine,10 mg,tablet,seed-verify
+Okacet,Cetirizine,10 mg,tablet,seed-verify
+Alerid,Cetirizine,10 mg,tablet,seed-verify
+Levocet,Levocetirizine,5 mg,tablet,seed-verify
+Allegra,Fexofenadine,120 mg|180 mg,tablet,seed-verify
+Montek LC,Montelukast + Levocetirizine,10 mg/5 mg,tablet,seed-verify
+Montair LC,Montelukast + Levocetirizine,10 mg/5 mg,tablet,seed-verify
+Montair,Montelukast,10 mg|4 mg|5 mg,tablet,seed-verify
+Avil,Pheniramine,25 mg,tablet,seed-verify
+Atarax,Hydroxyzine,10 mg|25 mg,tablet,seed-verify
+Practin,Cyproheptadine,4 mg,tablet,seed-verify
+Sinarest,Paracetamol + Phenylephrine + Chlorpheniramine,500 mg/10 mg/2 mg,tablet,seed-verify
+Cheston Cold,Paracetamol + Phenylephrine + Cetirizine,325 mg/10 mg/5 mg,tablet,seed-verify
+Ascoril,Terbutaline + Bromhexine + Guaifenesin,,syrup,seed-verify
+Ascoril LS,Levosalbutamol + Ambroxol + Guaifenesin,,syrup,seed-verify
+Grilinctus,Dextromethorphan + Chlorpheniramine,,syrup,seed-verify
+Benadryl,Diphenhydramine + Ammonium Chloride,,syrup,seed-verify
+Alex,Dextromethorphan + Phenylephrine + Chlorpheniramine,,syrup,seed-verify
+Ambrodil,Ambroxol,30 mg/5 ml,syrup,seed-verify
+Mucolite,Ambroxol,30 mg/5 ml,syrup,seed-verify
+Chericof,Dextromethorphan + Chlorpheniramine + Phenylephrine,,syrup,seed-verify
+Corex DX,Dextromethorphan + Chlorpheniramine,,syrup,seed-verify
+Levolin,Levosalbutamol,1 mg/5 ml|50 mcg,syrup,seed-verify
+Asthalin,Salbutamol,100 mcg|2 mg/5 ml,inhaler,seed-verify
+Duolin,Levosalbutamol + Ipratropium,,inhaler,seed-verify
+Budecort,Budesonide,100 mcg|200 mcg,inhaler,seed-verify
+Foracort,Formoterol + Budesonide,200 mcg|400 mcg,inhaler,seed-verify
+Seroflo,Salmeterol + Fluticasone,250 mcg|125 mcg,inhaler,seed-verify
+Deriphyllin,Etofylline + Theophylline,,tablet,seed-verify
+Otrivin,Xylometazoline,0.1 %|0.05 %,drops,seed-verify
+Nasivion,Oxymetazoline,0.05 %|0.025 %,drops,seed-verify
+Nasoclear,Sodium Chloride,0.65 %,drops,seed-verify
+Glycomet,Metformin,500 mg|850 mg|1000 mg,tablet,seed-verify
+Glycomet-GP,Metformin + Glimepiride,500 mg/1 mg|500 mg/2 mg,tablet,seed-verify
+Gluconorm-G,Metformin + Glimepiride,500 mg/1 mg|500 mg/2 mg,tablet,seed-verify
+Amaryl,Glimepiride,1 mg|2 mg|3 mg,tablet,seed-verify
+Glimestar,Glimepiride,1 mg|2 mg,tablet,seed-verify
+Glynase,Glipizide,5 mg,tablet,seed-verify
+Januvia,Sitagliptin,50 mg|100 mg,tablet,seed-verify
+Janumet,Sitagliptin + Metformin,50 mg/500 mg|50 mg/1000 mg,tablet,seed-verify
+Galvus,Vildagliptin,50 mg,tablet,seed-verify
+Galvus Met,Vildagliptin + Metformin,50 mg/500 mg|50 mg/1000 mg,tablet,seed-verify
+Tenelia,Teneligliptin,20 mg,tablet,seed-verify
+Forxiga,Dapagliflozin,5 mg|10 mg,tablet,seed-verify
+Telma,Telmisartan,20 mg|40 mg|80 mg,tablet,seed-verify
+Telma-H,Telmisartan + Hydrochlorothiazide,40 mg/12.5 mg,tablet,seed-verify
+Telma-AM,Telmisartan + Amlodipine,40 mg/5 mg,tablet,seed-verify
+Losar,Losartan,25 mg|50 mg,tablet,seed-verify
+Losar-H,Losartan + Hydrochlorothiazide,50 mg/12.5 mg,tablet,seed-verify
+Amlong,Amlodipine,2.5 mg|5 mg|10 mg,tablet,seed-verify
+Stamlo,Amlodipine,2.5 mg|5 mg|10 mg,tablet,seed-verify
+Amlokind-AT,Amlodipine + Atenolol,5 mg/50 mg,tablet,seed-verify
+Enam,Enalapril,2.5 mg|5 mg|10 mg,tablet,seed-verify
+Metolar,Metoprolol,25 mg|50 mg,tablet,seed-verify
+Concor,Bisoprolol,2.5 mg|5 mg,tablet,seed-verify
+Nebicard,Nebivolol,2.5 mg|5 mg,tablet,seed-verify
+Cardivas,Carvedilol,3.125 mg|6.25 mg|12.5 mg,tablet,seed-verify
+Atorva,Atorvastatin,10 mg|20 mg|40 mg,tablet,seed-verify
+Storvas,Atorvastatin,10 mg|20 mg|40 mg,tablet,seed-verify
+Lipikind,Atorvastatin,10 mg|20 mg,tablet,seed-verify
+Rosuvas,Rosuvastatin,5 mg|10 mg|20 mg,tablet,seed-verify
+Clopitab,Clopidogrel,75 mg,tablet,seed-verify
+Deplatt,Clopidogrel,75 mg,tablet,seed-verify
+Ecosprin-AV,Aspirin + Atorvastatin,75 mg/10 mg|75 mg/20 mg,capsule,seed-verify
+Lasix,Furosemide,40 mg,tablet,seed-verify
+Dytor,Torsemide,10 mg|20 mg,tablet,seed-verify
+Aldactone,Spironolactone,25 mg|50 mg,tablet,seed-verify
+Sorbitrate,Isosorbide Dinitrate,5 mg|10 mg,tablet,seed-verify
+Thyronorm,Levothyroxine,25 mcg|50 mcg|75 mcg|100 mcg,tablet,seed-verify
+Eltroxin,Levothyroxine,25 mcg|50 mcg|100 mcg,tablet,seed-verify
+Shelcal,Calcium Carbonate + Vitamin D3,500 mg,tablet,seed-verify
+Becosules,Vitamin B Complex + Vitamin C,,capsule,seed-verify
+Zincovit,Multivitamin + Multimineral,,tablet,seed-verify
+Limcee,Vitamin C,500 mg,tablet,seed-verify
+Neurobion Forte,Vitamin B Complex,,tablet,seed-verify
+Methycobal,Methylcobalamin,500 mcg|1500 mcg,tablet,seed-verify
+Nurokind,Methylcobalamin,500 mcg|1500 mcg,tablet,seed-verify
+Evion,Vitamin E,400 mg|600 mg,capsule,seed-verify
+Supradyn,Multivitamin + Multimineral,,tablet,seed-verify
+A to Z,Multivitamin + Multimineral,,tablet,seed-verify
+Orofer-XT,Ferrous Ascorbate + Folic Acid,100 mg/1.5 mg,tablet,seed-verify
+Livogen,Ferrous Fumarate + Folic Acid,,tablet,seed-verify
+Dexorange,Iron + Vitamin B12 + Folic Acid,,syrup,seed-verify
+Fefol,Ferrous Sulphate + Folic Acid,,capsule,seed-verify
+Folvite,Folic Acid,5 mg,tablet,seed-verify
+Uprise-D3,Cholecalciferol,60000 IU,capsule,seed-verify
+Calcirol,Cholecalciferol,60000 IU,powder,seed-verify
+Wysolone,Prednisolone,5 mg|10 mg|20 mg,tablet,seed-verify
+Omnacortil,Prednisolone,5 mg|10 mg|20 mg,tablet,seed-verify
+Medrol,Methylprednisolone,4 mg|8 mg|16 mg,tablet,seed-verify
+Betnesol,Betamethasone,0.5 mg,tablet,seed-verify
+Dexona,Dexamethasone,0.5 mg|4 mg,tablet,seed-verify
+Gabapin,Gabapentin,100 mg|300 mg,capsule,seed-verify
+Pregalin,Pregabalin,75 mg|150 mg,capsule,seed-verify
+Alprax,Alprazolam,0.25 mg|0.5 mg,tablet,seed-verify
+Restyl,Alprazolam,0.25 mg|0.5 mg,tablet,seed-verify
+Zolfresh,Zolpidem,5 mg|10 mg,tablet,seed-verify
+Nexito,Escitalopram,5 mg|10 mg,tablet,seed-verify
+Flunil,Fluoxetine,20 mg,capsule,seed-verify
+Serta,Sertraline,50 mg|100 mg,tablet,seed-verify
+Lonazep,Clonazepam,0.25 mg|0.5 mg,tablet,seed-verify
+Levipil,Levetiracetam,250 mg|500 mg,tablet,seed-verify
+Tegretol,Carbamazepine,200 mg|400 mg,tablet,seed-verify
+Eptoin,Phenytoin,100 mg,tablet,seed-verify
+Valparin,Sodium Valproate,200 mg|500 mg,tablet,seed-verify
+Oleanz,Olanzapine,5 mg|10 mg,tablet,seed-verify
+Risdone,Risperidone,1 mg|2 mg,tablet,seed-verify
+Betadine,Povidone Iodine,5 %|10 %,cream,seed-verify
+Soframycin,Framycetin,1 %,cream,seed-verify
+T-Bact,Mupirocin,2 %,cream,seed-verify
+Candid,Clotrimazole,1 %,cream,seed-verify
+Forcan,Fluconazole,150 mg|200 mg,tablet,seed-verify
+Zocon,Fluconazole,150 mg,tablet,seed-verify
+Terbicip,Terbinafine,250 mg|1 %,tablet,seed-verify
+Itrasys,Itraconazole,100 mg|200 mg,capsule,seed-verify
+Acivir,Acyclovir,400 mg|800 mg,tablet,seed-verify
+Valcivir,Valacyclovir,500 mg|1000 mg,tablet,seed-verify
+Zentel,Albendazole,400 mg,tablet,seed-verify
+Bandy,Albendazole,400 mg,tablet,seed-verify
+Mebex,Mebendazole,100 mg,tablet,seed-verify
+Ivecop,Ivermectin,6 mg|12 mg,tablet,seed-verify
+Permite,Permethrin,5 %,cream,seed-verify
+Tenovate,Clobetasol,0.05 %,cream,seed-verify
+Elocon,Mometasone,0.1 %,cream,seed-verify
+Momate,Mometasone,0.1 %,cream,seed-verify
+Moxicip,Moxifloxacin,0.5 %,drops,seed-verify
+Milflox,Moxifloxacin,0.5 %,drops,seed-verify
+Refresh Tears,Carboxymethylcellulose,0.5 %,drops,seed-verify
+Ciplox-D,Ciprofloxacin + Dexamethasone,,drops,seed-verify
+Urimax,Tamsulosin,0.4 mg,capsule,seed-verify
+Finast,Finasteride,5 mg,tablet,seed-verify
+Duphaston,Dydrogesterone,10 mg,tablet,seed-verify
+Susten,Progesterone,100 mg|200 mg,capsule,seed-verify
+Primolut-N,Norethisterone,5 mg,tablet,seed-verify
+Letroz,Letrozole,2.5 mg,tablet,seed-verify
+Doxinate,Doxylamine + Pyridoxine,10 mg/10 mg,tablet,seed-verify
+Lariago,Chloroquine,250 mg,tablet,seed-verify
+Falcigo,Artesunate,50 mg|100 mg,tablet,seed-verify
+Human Mixtard,Insulin Human Premix 30/70,40 IU/ml|100 IU/ml,injection,seed-verify
+Lantus,Insulin Glargine,100 IU/ml,injection,seed-verify
+Novorapid,Insulin Aspart,100 IU/ml,injection,seed-verify

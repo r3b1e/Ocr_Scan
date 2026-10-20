@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.1.0 - 2026-10-21 - remainRX prescription extraction (phase 1)
+
+### Added
+- `core/prescription.py` - Pydantic schema: `RawPrescription` (what the vision model fills) and
+  `PrescriptionExtraction` (validated API response with per-field `ok` / `corrected` /
+  `unverified` status, confidence and image boxes).
+- `core/extractors/` - one `PrescriptionExtractor` interface with two backends switchable via
+  `EXTRACTOR_BACKEND`: Claude API structured outputs (`messages.parse`, default
+  `claude-opus-5-5`) and local Ollama (`qwen3-vl:4b`, JSON-schema `format`, temperature 0).
+  Plain-language errors for missing keys, rate limits, refusals, Ollama not running or model
+  not pulled; no silent fallback between backends.
+- `core/sig_grammar.py` - parser for Indian prescription shorthand (`1-0-1`, `OD/BD/TDS/QID/HS/
+  SOS`, `q8h`, `A/F B/F AC PC`, durations, dosage forms, strengths, doses) with 180 tests.
+- `core/drug_lexicon.py` + `data/drug_lexicon_in.csv` - 220 common Indian brands with
+  compositions and strengths (seed list, `source=seed-verify`), fuzzy matched with RapidFuzz.
+- `core/imaging.py` - EXIF-aware loading, downscaling, projection-profile deskew, denoise.
+- `core/locate.py` - maps extracted values back to EasyOCR text lines for highlighting.
+- `core/prescription_pipeline.py` - printed/handwritten detection, OCR hint, validation layer,
+  confidence formula, persistence.
+- `database/prescription_repository.py` - `documents`, `extractions`, `corrections` tables for
+  MySQL and SQLite; `DatabaseManager.prescriptions`; shared `MySQLConnectionBase`.
+- `service/` - FastAPI app: `POST /extract`, `POST /feedback`, `GET|DELETE /documents/{id}`,
+  `GET /health`; `python -m service` runs it with uvicorn.
+- New `.env` keys (see `.env.example`), pinned dependencies, README section, design spec and
+  phase 1 plan under `docs/superpowers/`.
+
+### Verified
+- `pytest -q` -> 384 passed (SQLite + MySQL 8.4 + real EasyOCR; backends tested with fake
+  clients and recorded fixtures, no network). `ruff check`, `ruff format --check`,
+  `compileall` clean.
+- Live backend check (`pytest -m live`): see the entry below once recorded.
+
+
 ## 1.0.0 - 2026-09-20
 
 First complete release of the OCR Data Scanning Tool.

@@ -1,0 +1,6 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": "{\"patient_name\": \"Suman\", \"patient_age\": \"32\", \"doctor_name\": \"Dr. R. Rao\", \"prescribed_on\": \"2026-10-20\", \"medications\": [{\"name\": \"Tab. Dolo 650\", \"strength\": null, \"form\": null, \"dose\": \"1\", \"frequency_text\": \"1-0-1\", \"timing_text\": \"A/F\", \"duration_text\": \"x 5 days\", \"instructions\": null, \"confidence\": 0.92}, {\"name\": \"Cap. Omez 20\", \"strength\": \"20 mg\", \"form\": \"capsule\", \"dose\": \"1\", \"frequency_text\": \"1-0-0\", \"timing_text\": \"B/F\", \"duration_text\": \"x 7 days\", \"instructions\": null, \"confidence\": 0.88}, {\"name\": \"Syp. Ascoril\", \"strength\": null, \"form\": \"syrup\", \"dose\": \"5 ml\", \"frequency_text\": \"TDS\", \"timing_text\": null, \"duration_text\": \"3 days\", \"instructions\": \"shake well\", \"confidence\": 0.8}], \"notes\": \"Viral fever. Review after 5 days.\"}"
+  }
+}

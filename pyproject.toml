@@ -14,14 +14,16 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "ANN"]
+"core/extractors/prompt.py" = ["E501"]  # prompt text must stay byte-stable for caching
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+addopts = "-ra -m 'not live'"
 markers = [
+    "live: calls the real vision backends (opt in with `pytest -m live`)",
     "slow: runs the real EasyOCR model (downloads ~100 MB on first run)",
     "mysql: requires a reachable MySQL server (see tests/test_db_manager.py)",
     "gui: requires a Tk display",

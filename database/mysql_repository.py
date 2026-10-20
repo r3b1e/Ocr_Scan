@@ -47,8 +47,8 @@ def load_schema_statements(path: Path = SCHEMA_PATH) -> list[str]:
     return [s for s in statements if s and not s.upper().startswith("CREATE DATABASE")]
 
 
-class MySQLScanRepository:
-    """Store scans in MySQL. Creates the database and tables on first use."""
+class MySQLConnectionBase:
+    """Connection pool plus schema bootstrap shared by every MySQL repository."""
 
     backend_name = "MySQL"
 
@@ -184,6 +184,17 @@ class MySQLScanRepository:
             finally:
                 cursor.close()
 
+    def close(self) -> None:
+        """Drop the pool reference; pooled connections close when garbage-collected."""
+        pool, self._pool = self._pool, None
+        if pool is not None:
+            with suppress(Exception):
+                pool._remove_connections()  # noqa: SLF001 - connector has no public drain API
+
+
+class MySQLScanRepository(MySQLConnectionBase):
+    """Store scans in MySQL. Creates the database and tables on first use."""
+
     # --------------------------------------------------------------- sessions
     def create_session(self, started_at: datetime) -> int:
         """Insert a session row and return its id."""
@@ -317,10 +328,3 @@ class MySQLScanRepository:
         with self._cursor() as cur:
             cur.execute("SELECT confidence FROM scans ORDER BY id DESC LIMIT %s", (int(limit),))
             return [float(row[0]) for row in cur.fetchall()]
-
-    def close(self) -> None:
-        """Drop the pool reference; pooled connections close when garbage-collected."""
-        pool, self._pool = self._pool, None
-        if pool is not None:
-            with suppress(Exception):
-                pool._remove_connections()  # noqa: SLF001 - connector has no public drain API

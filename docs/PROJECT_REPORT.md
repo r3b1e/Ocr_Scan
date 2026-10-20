@@ -82,6 +82,23 @@ Findings that decided the path:
    context. The non-reasoning `qwen2.5vl:3b` answers correctly in about 20 seconds. Details in
    section 8.
 
+### 3.1 The decision path, visually
+
+```mermaid
+flowchart TD
+  Q["Goal: prescription photo → reminders<br/>mixed printed + handwritten, Indian brands"] --> C{"Can we collect labelled data?"}
+  C -->|"No: solo student, no volunteers"| V["Vision-language model reads the page<br/>zero-shot, JSON schema, no training data"]
+  C -->|"Would need thousands of transcribed handwritten lines"| X["Fully offline: TrOCR + LiLT"]
+  X -.->|"rejected"| V
+  V --> B{"Cloud or local?"}
+  B -->|"best accuracy, about 1¢ per scan"| CL["Claude API (structured outputs)"]
+  B -->|"free, offline, about 20 s per scan"| OL["Ollama · qwen2.5vl:3b"]
+  CL --> R["Validation layer + confirm screen<br/>lexicon · sig grammar · per-field status"]
+  OL --> R
+  R --> D[("Corrections become evaluation + training data")]
+  D -.->|"phase 3"| LI["LiLT fine-tuned on synthetic printed prescriptions"]
+```
+
 ---
 
 ## 4. Decisions and their reasons
@@ -111,29 +128,26 @@ Findings that decided the path:
 
 ## 5. Architecture
 
-```
-RemindRx website (web/, React + Vite)                     Desktop tool (gui/, Tkinter)
-   Scan tab ──POST /extract──┐                               camera → EasyOCR → scans
-   Review/edit → MedForm     │                               (history, stats, export)
-   POST /feedback            │
-                             ▼
-              FastAPI service (service/api.py)
-              /extract  /feedback  /documents/{id}[/image]  /health      CORS for Vite origins
-                             │
-                             ▼
-              core/prescription_pipeline.run_extraction()
-              ┌────────────────────────────────────────────────────────────────────┐
-              │ imaging: EXIF rotate, downscale ≤1600 px, deskew, denoise          │
-              │ EasyOCR pass: fragments + boxes, mean confidence,                   │
-              │               printed/handwritten decision, OCR hint                │
-              │ extractor (Claude | Ollama) → RawPrescription (what is written)     │
-              │ validation: drug lexicon · sig grammar · range checks · locate      │
-              │ → PrescriptionExtraction (structured, graded, with boxes)          │
-              └────────────────────────────────────────────────────────────────────┘
-                             │
-                             ▼
-              database/: MySQL (pooled, auto-created schema) or SQLite offline
-              scans · scan_sessions · documents · extractions · corrections
+![System architecture: website, extraction service, desktop OCR tool](diagrams/architecture.png)
+
+*Interactive version with hover, search and export: [`docs/diagrams/architecture.html`](diagrams/architecture.html). Green arrows are the main request path, dashed violet arrows the backend choice, dashed red the validated result returning to storage.*
+
+```mermaid
+flowchart LR
+  U["User<br/>phone or laptop"] -->|"photo / upload"| W["RemindRx website<br/>React · Scan tab"]
+  W -->|"POST /extract · /feedback"| A["Extraction API<br/>FastAPI"]
+  T["Desktop OCR tool<br/>Tkinter · webcam"] -->|"scans"| D
+  subgraph S["Runs on your own machine (Python service)"]
+    A -->|"image"| P["Image prep<br/>EXIF · deskew · denoise"]
+    P -->|"prepared JPEG"| O["EasyOCR pass<br/>boxes · hint · printed?"]
+    O -->|"image + hint"| V["Vision backend<br/>RawPrescription JSON"]
+    V -->|"raw medicines"| X["Validation layer<br/>lexicon · sig grammar · locate"]
+    X -->|"fuzzy match"| L[("Drug lexicon<br/>220 Indian brands")]
+    X -->|"PrescriptionExtraction"| D[("MySQL / SQLite<br/>documents · extractions · corrections")]
+    A -->|"store · serve image"| D
+    V -.->|"offline"| OL["Ollama (local)<br/>qwen2.5vl:3b"]
+  end
+  V -.->|"cloud, only if chosen"| C["Claude API<br/>structured outputs"]
 ```
 
 Layers and responsibilities:
@@ -174,6 +188,37 @@ a bug found during the acceptance run.
 ---
 
 ## 7. End-to-end flow
+
+![One prescription scan, end to end](diagrams/sequence-end-to-end.png)
+
+*Interactive version: [`docs/diagrams/sequence-end-to-end.html`](diagrams/sequence-end-to-end.html).*
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Web as RemindRx web
+  participant API as Extraction API
+  participant OCR as EasyOCR pass
+  participant VLM as Vision model
+  participant Val as Validation
+  participant DB as Database
+  User->>Web: photo + Read prescription
+  Web->>API: POST /extract (image)
+  API->>OCR: prepared image
+  OCR-->>API: fragments, boxes, printed/handwritten, hint
+  API->>VLM: JPEG + system prompt + hint
+  VLM-->>API: RawPrescription JSON (as written)
+  API->>Val: match brands, parse 1-0-1 / BD / A/F, locate
+  Val-->>API: Medication[] with status + confidence
+  API-)DB: document + extraction
+  API-->>Web: 200 PrescriptionExtraction
+  Web-->>User: boxes on image + editable cards
+  User->>Web: correct, Review and add, Done
+  Web-)API: POST /feedback (corrected JSON)
+  API-)DB: correction
+```
+
+The same flow in words:
 
 1. **User** opens the Scan tab, takes a photo or chooses an image, picks a backend if both are
    configured, presses *Read prescription*.
@@ -226,6 +271,24 @@ Example response (abridged, real output of the local model on the handwriting-st
 ## 8. How the extracted text is arranged into structured data
 
 The model reads; the code interprets. This separation is what makes results checkable.
+
+![How prescription text becomes structured, graded data](diagrams/dataflow-structuring.png)
+
+*Interactive version: [`docs/diagrams/dataflow-structuring.html`](diagrams/dataflow-structuring.html).*
+
+```mermaid
+flowchart LR
+  I["Prescription photo"] -->|"JPEG + prompt"| V["Vision model<br/>copies text as written"]
+  I -->|"prepared image"| O["EasyOCR pass<br/>fragments + boxes"]
+  V -->|"name as written"| L[("Drug lexicon<br/>RapidFuzz ≥ 90 ok · 75-89 corrected")]
+  V -->|"frequency / timing / duration text"| G["Sig grammar<br/>1-0-1 · BD · HS · A/F · x 5 days"]
+  O -.->|"fragments + boxes"| K["Locate on image"]
+  L -->|"brand, composition, strength"| R["Medication record<br/>status + confidence per field"]
+  G -->|"times a day, slots, meal timing, days"| R
+  K -.->|"line box"| R
+  R -->|"slots → 08:00 / 13:00 / 18:00 / 21:00, days → end date"| F["Reminder draft<br/>user confirms in MedForm"]
+  R -.->|"raw + validated + corrected JSON"| S[("Corrections store")]
+```
 
 ### 8.1 Two schemas
 

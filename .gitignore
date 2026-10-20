@@ -30,3 +30,6 @@ web/node_modules/
 web/dist/
 web/.env
 web/.env.*
+
+# Archify working folders (finished diagrams live in docs/diagrams/)
+.archify/

@@ -169,6 +169,8 @@ def test_ollama_extract_uses_schema_image_and_zero_temperature():
     assert call["model"] == "qwen3-vl:4b"
     assert call["format"] == RawPrescription.model_json_schema()
     assert call["options"]["temperature"] == 0
+    assert call["think"] is False, "reasoning must be off or the model spends its budget thinking"
+    assert call["options"]["num_predict"] >= 4096
     assert (
         call["messages"][0]["role"] == "system" and call["messages"][0]["content"] == SYSTEM_PROMPT
     )
@@ -188,6 +190,21 @@ def test_ollama_invalid_json_is_retried_once():
     client = _FakeOllamaClient(contents=["nope", "{bad"])
     with pytest.raises(ExtractorError, match="valid JSON"):
         OllamaExtractor("qwen3-vl:4b", "http://127.0.0.1:11434", client=client).extract(IMAGE, None)
+
+
+def test_ollama_empty_content_reports_token_limit():
+    class _LengthClient(_FakeOllamaClient):
+        def chat(self, **kwargs):
+            self.calls.append(kwargs)
+            return {
+                "message": {"role": "assistant", "content": "", "thinking": "Okay..."},
+                "done_reason": "length",
+            }
+
+    client = _LengthClient()
+    with pytest.raises(ExtractorError, match="output token limit"):
+        OllamaExtractor("qwen3-vl:4b", "http://127.0.0.1:11434", client=client).extract(IMAGE, None)
+    assert len(client.calls) == 2
 
 
 def test_ollama_connection_and_missing_model_errors():

@@ -15,7 +15,17 @@ from utils.logger import get_logger
 log = get_logger("core.extractors.ollama")
 
 _ATTEMPTS = 2
-_TIMEOUT_SECONDS = 300
+_TIMEOUT_SECONDS = 600
+# Reasoning models (qwen3-vl) otherwise spend the whole output budget "thinking" and return
+# an empty answer with done_reason="length"; keep thinking off and leave room for the JSON.
+_NUM_PREDICT = 4096
+
+
+def _optional(obj: Any, key: str) -> Any:
+    try:
+        return _field(obj, key)
+    except (KeyError, AttributeError, TypeError):
+        return None
 
 
 def _field(obj: Any, key: str) -> Any:
@@ -88,21 +98,42 @@ class OllamaExtractor:
                 "images": [image_jpeg],
             },
         ]
+        hit_limit = False
         for attempt in range(1, _ATTEMPTS + 1):
             try:
                 response = client.chat(
-                    model=self.model, messages=messages, format=schema, options={"temperature": 0}
+                    model=self.model,
+                    messages=messages,
+                    format=schema,
+                    think=False,
+                    options={"temperature": 0, "num_predict": _NUM_PREDICT},
                 )
             except Exception as exc:
                 log.warning("Ollama request failed: %s", exc)
                 raise self._translate(exc) from exc
-            content = str(_field(_field(response, "message"), "content"))
+            content = str(_field(_field(response, "message"), "content") or "")
+            done_reason = _optional(response, "done_reason")
+            if not content.strip():
+                hit_limit = done_reason == "length"
+                log.warning(
+                    "Ollama returned no content (attempt %s/%s, done_reason=%s)",
+                    attempt,
+                    _ATTEMPTS,
+                    done_reason,
+                )
+                continue
             try:
                 return RawPrescription.model_validate_json(content)
             except ValidationError as exc:
+                hit_limit = False
                 log.warning(
                     "Ollama returned invalid JSON (attempt %s/%s): %s", attempt, _ATTEMPTS, exc
                 )
+        if hit_limit:
+            raise ExtractorError(
+                f"Ollama model '{self.model}' hit its output token limit before answering "
+                f"after {_ATTEMPTS} attempts; try a smaller image or another model."
+            )
         raise ExtractorError(
             f"Ollama did not return valid JSON for the prescription schema after {_ATTEMPTS} "
             "attempts; try again or use a larger model."

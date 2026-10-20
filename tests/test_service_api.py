@@ -183,3 +183,32 @@ def test_extract_backend_failure_is_502(settings):
     with _client(settings, extractors={"fake": failing}) as client:
         response = client.post("/extract", files={"image": ("rx.jpg", IMAGE, "image/jpeg")})
     assert response.status_code == 502 and "internet" in response.json()["detail"]
+
+
+def test_cors_allows_configured_web_origin(settings):
+    settings.api_cors_origins = ["http://localhost:5175"]
+    with _client(settings) as client:
+        preflight = client.options(
+            "/extract",
+            headers={
+                "Origin": "http://localhost:5175",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+        assert preflight.status_code == 200
+        assert preflight.headers["access-control-allow-origin"] == "http://localhost:5175"
+        health = client.get("/health", headers={"Origin": "http://localhost:5175"})
+        assert health.headers.get("access-control-allow-origin") == "http://localhost:5175"
+        other = client.get("/health", headers={"Origin": "http://evil.example"})
+        assert "access-control-allow-origin" not in other.headers
+
+
+def test_document_image_is_served_and_404s_when_missing(settings):
+    with _client(settings) as client:
+        created = client.post("/extract", files={"image": ("rx.jpg", IMAGE, "image/jpeg")}).json()
+        response = client.get(f"/documents/{created['document_id']}/image")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/jpeg"
+        assert response.content[:2] == b"\xff\xd8"
+        assert client.get("/documents/999/image").status_code == 404

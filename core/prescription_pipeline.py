@@ -242,7 +242,17 @@ def run_extraction(
     prepared = prepare_for_ocr(frame)
     ocr = run_ocr_pass(prepared, engine, hint_for_printed=settings.ocr_hint_for_printed)
     jpeg = encode_jpeg(prepared)
+    log.info(
+        "OCR pass: %s fragments, mean confidence %.2f, handwritten=%s, image %sx%s",
+        len(ocr.fragments),
+        ocr.mean_confidence,
+        ocr.handwritten,
+        prepared.shape[1],
+        prepared.shape[0],
+    )
+    log.debug("OCR hint:\n%s", ocr.hint)
     raw = extractor.extract(jpeg, ocr.hint)
+    log.debug("Raw model output: %s", raw.model_dump_json())
 
     medications: list[Medication] = []
     warnings: list[str] = []
@@ -290,11 +300,13 @@ def run_extraction(
         result.document_id = document_id
         repo.save_extraction(document_id, raw.model_dump_json(), result.model_dump_json())
     log.info(
-        "Extraction via %s/%s: %s medication(s), handwritten=%s, %s ms",
+        "Extraction via %s/%s: %s medication(s), handwritten=%s, %s ms; statuses=%s; warnings=%s",
         extractor.name,
         extractor.model,
         len(medications),
         ocr.handwritten,
         processing_ms,
+        [f"{m.name}:{m.status}" for m in medications],
+        warnings,
     )
     return result

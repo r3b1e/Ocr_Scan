@@ -119,3 +119,17 @@ def test_prescription_extraction_overrides_and_fallbacks(tmp_path: Path):
     assert settings.extractor_backend == "claude"
     assert settings.api_port == 8000
     assert settings.extract_max_image_side == 1600
+
+
+def test_cors_origins_default_and_override(tmp_path: Path):
+    settings = Settings.load(env_path=tmp_path / "nope.env", base_dir=tmp_path)
+    assert settings.api_cors_origins == [
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
+        "http://localhost:4175",
+        "http://127.0.0.1:4175",
+    ]
+    env = tmp_path / ".env"
+    env.write_text("API_CORS_ORIGINS=https://remindrx.example, http://localhost:3000\n")
+    settings = Settings.load(env_path=env, base_dir=tmp_path)
+    assert settings.api_cors_origins == ["https://remindrx.example", "http://localhost:3000"]

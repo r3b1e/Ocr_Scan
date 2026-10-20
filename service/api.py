@@ -12,6 +12,8 @@ from typing import Any
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.concurrency import run_in_threadpool
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from config.settings import Settings
@@ -113,6 +115,12 @@ def create_app(
         database.close()
 
     app = FastAPI(title="remainRX Prescription Extraction", version="1.0.0", lifespan=lifespan)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(settings.api_cors_origins),
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+    )
     app.state.service = state
 
     @app.get("/health")
@@ -204,6 +212,14 @@ def create_app(
             "result": json.loads(result_json) if result_json else None,
             "correction": json.loads(correction_json) if correction_json else None,
         }
+
+    @app.get("/documents/{document_id}/image")
+    def get_document_image(document_id: int, request: Request) -> FileResponse:
+        """The processed (downscaled, deskewed) JPEG that the returned boxes refer to."""
+        stored = _repo(request).get_document(document_id)
+        if stored is None or not stored[0].image_path or not Path(stored[0].image_path).exists():
+            raise HTTPException(404, f"No image stored for document {document_id}")
+        return FileResponse(stored[0].image_path, media_type="image/jpeg")
 
     @app.delete("/documents/{document_id}")
     def delete_document(document_id: int, request: Request) -> dict[str, bool]:

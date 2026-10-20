@@ -116,6 +116,14 @@ class Settings:
     lexicon_file: Path | None = None
     api_host: str = "127.0.0.1"
     api_port: int = 8000
+    api_cors_origins: list[str] = field(
+        default_factory=lambda: [
+            "http://localhost:5175",
+            "http://127.0.0.1:5175",
+            "http://localhost:4175",
+            "http://127.0.0.1:4175",
+        ]
+    )
 
     base_dir: Path = BASE_DIR
 
@@ -223,6 +231,9 @@ class Settings:
             lexicon_file=Path(lexicon_raw).expanduser() if lexicon_raw else None,
             api_host=(values.get("API_HOST") or defaults.api_host).strip(),
             api_port=_as_port(values.get("API_PORT"), defaults.api_port),
+            api_cors_origins=_as_languages(
+                values.get("API_CORS_ORIGINS"), defaults.api_cors_origins
+            ),
             base_dir=base_dir or BASE_DIR,
         )
 

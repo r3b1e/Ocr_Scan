@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.0 - 2026-10-21 - website integration
+
+### Added
+- `web/` Scan tab (`src/screens/ScanPrescription.tsx`): camera or file upload, backend picker,
+  processed image with per-medicine boxes coloured by status, editable name / strength / dose /
+  times per day / food timing / duration, and *Review and add* which opens the existing Add
+  Medication form pre-filled (`src/lib/prescriptionToDraft.ts`). Corrections go to `/feedback`.
+- `web/src/api/extract.ts` typed client; `VITE_EXTRACT_API` setting; `MedForm` accepts a
+  pre-filled draft and reports saves.
+- Service: CORS for the Vite dev/preview origins (`API_CORS_ORIGINS`), `GET /documents/{id}/image`
+  (the processed JPEG the boxes refer to), and detailed per-extraction logging (OCR confidence,
+  hint and raw model JSON at DEBUG, per-medicine statuses).
+
+### Known gap
+- The website imports a `shared/` domain module that is not in this repository; it must be
+  copied next to `web/` before `npm run build` / `npm run dev` work.
+
 ## 1.1.0 - 2026-10-21 - remainRX prescription extraction (phase 1)
 
 ### Added

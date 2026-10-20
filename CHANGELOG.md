@@ -30,7 +30,23 @@
 - `pytest -q` -> 384 passed (SQLite + MySQL 8.4 + real EasyOCR; backends tested with fake
   clients and recorded fixtures, no network). `ruff check`, `ruff format --check`,
   `compileall` clean.
-- Live backend check (`pytest -m live`): see the entry below once recorded.
+- Live backend check (`pytest -m live`, local Ollama `qwen2.5vl:3b`, M-series MacBook Air, no
+  GPU): both sample images extracted correctly. Printed sample: Dolo 650 (1-0-1, after food,
+  5 days), Omez 20 (1-0-0, before food, 7 days), Ascoril (TDS, 3 days). Handwriting-style
+  sample: the same three plus Levocet 5 (0-0-1, bedtime, 5 days); all fields `ok`, no warnings,
+  about 14-25 s per image. Claude live checks skipped (no API key on the dev machine); the
+  Claude backend is covered by fake-client tests.
+
+### Fixed during live verification
+- `qwen3-vl:4b` (the planned local default) never produced JSON under Ollama's JSON-schema
+  output: it reasoned until the token budget ran out (`done_reason=length`, empty content),
+  even with `think=False` and a larger context. Default local model switched to the
+  non-reasoning `qwen2.5vl:3b`; the Ollama call now sets `num_ctx=8192` (the 4096 default
+  cannot hold an image plus prompt and answer), `num_predict=4096`, and sends `think=False`
+  only to models that list the `thinking` capability. Empty answers are reported as a
+  token-limit error instead of "invalid JSON".
+- Bare numeric strengths from the model ("650") are completed from the lexicon ("650 mg")
+  instead of being flagged.
 
 
 ## 1.0.0 - 2026-09-20

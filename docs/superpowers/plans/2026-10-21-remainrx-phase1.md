@@ -136,6 +136,6 @@ extractor_backend, claude_model, ollama_host, ollama_model, extract_max_image_si
 - [x] implement `service/api.py`, `service/__main__.py`, `service/__init__.py`
 
 ### Task 9: Live verification + docs
-- [ ] `pytest -m live` against whichever backends are available on this machine (Ollama pulled model / Claude credentials); record results honestly
+- [x] `pytest -m live` against whichever backends are available on this machine (Ollama pulled model / Claude credentials); record results honestly
 - [x] README section "remainRX extraction service", `.env.example` keys, `requirements.txt` pins, CHANGELOG 1.1.0
 - [x] ruff, compileall, full pytest; commit

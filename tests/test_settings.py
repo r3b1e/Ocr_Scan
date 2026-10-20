@@ -88,7 +88,7 @@ def test_prescription_extraction_defaults(tmp_path: Path):
     assert settings.extractor_backend == "claude"
     assert settings.claude_model == "claude-opus-5-5"
     assert settings.ollama_host == "http://127.0.0.1:11434"
-    assert settings.ollama_model == "qwen3-vl:4b"
+    assert settings.ollama_model == "qwen2.5vl:3b"
     assert settings.extract_max_image_side == 1600
     assert settings.ocr_hint_for_printed is True
     assert settings.confidence_flag_threshold == 0.6

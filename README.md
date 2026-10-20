@@ -264,7 +264,10 @@ pre-fill medicine reminders. Design: `docs/superpowers/specs/2026-10-21-remainrx
      `claude-opus-5-5`; needs `ANTHROPIC_API_KEY`). About one cent per prescription on Opus,
      far less on `claude-haiku-5-5`.
    - `EXTRACTOR_BACKEND=ollama` - a local open model through Ollama, fully offline and free
-     (`ollama pull qwen3-vl:4b`; `qwen3-vl:2b` for weaker laptops).
+     (`ollama pull qwen2.5vl:3b`; `qwen2.5vl:7b` if you have 16 GB RAM to spare). About 20 to
+     25 seconds per image on a laptop without a GPU. Reasoning models such as `qwen3-vl` are
+     not suitable: under Ollama's JSON-schema output they deliberate until the token budget is
+     gone and return an empty answer (observed in the live run).
 3. The validation layer repairs and grades every field: the Indian drug lexicon
    (`data/drug_lexicon_in.csv`, brand -> composition, fuzzy matched), the sig grammar
    (`1-0-1`, `OD/BD/TDS/QID/HS/SOS`, `A/F B/F AC PC`, `x 5 days`, `Tab./Cap./Syp.`), range checks,

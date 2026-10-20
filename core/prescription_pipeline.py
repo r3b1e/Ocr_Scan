@@ -149,7 +149,11 @@ def validate_medication(
     field_status["name"] = match.status
 
     strength = normalise_strength(raw.strength) if raw.strength else None
+    if raw.strength and strength is None and match.entry is not None:
+        # Models often copy a bare number ("650"); complete the unit from the lexicon.
+        strength = _infer_strength(raw.strength, match.entry.strengths)
     if raw.strength and strength is None:
+        strength = raw.strength.strip()
         field_status["strength"] = "unverified"
         warnings.append(f"Strength '{raw.strength}' for {name} is not a recognised amount")
     elif strength:

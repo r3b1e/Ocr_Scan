@@ -310,3 +310,15 @@ def test_run_extraction_with_real_easyocr(settings):
     assert result.handwritten is False
     assert "Dolo" in (extractor.calls[0][1] or "")
     assert result.medications[0].bbox is not None
+
+
+def test_validate_bare_numeric_strength_is_completed_from_lexicon():
+    raw = RawMedication(name="Dolo", strength="650", frequency_text="1-0-1", confidence=0.9)
+    med, warnings = validate_medication(raw, LEXICON, [])
+    assert med.strength == "650 mg" and med.field_status["strength"] == "ok"
+    assert med.status == "ok" and warnings == []
+
+    unknown_number = RawMedication(name="Ascoril", strength="5", confidence=0.9)
+    med, warnings = validate_medication(unknown_number, LEXICON, [])
+    assert med.strength == "5" and med.field_status["strength"] == "unverified"
+    assert any("Strength '5'" in w for w in warnings)

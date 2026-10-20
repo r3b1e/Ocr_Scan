@@ -109,7 +109,7 @@ class Settings:
     extractor_backend: str = "claude"
     claude_model: str = "claude-opus-5-5"
     ollama_host: str = "http://127.0.0.1:11434"
-    ollama_model: str = "qwen3-vl:4b"
+    ollama_model: str = "qwen2.5vl:3b"
     extract_max_image_side: int = 1600
     ocr_hint_for_printed: bool = True
     confidence_flag_threshold: float = 0.6

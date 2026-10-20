@@ -138,8 +138,8 @@ image bytes
 
 - The EasyOCR pass is skipped for the hint when `handwritten` is true (garbage text would
   mislead the model); boxes are still used for locating values.
-- Processing budget: EasyOCR about 1 s, Claude 3-8 s, Ollama `qwen3-vl:4b` 10-60 s on a
-  laptop CPU/Metal. `processing_ms` is reported.
+- Processing budget: EasyOCR about 1 s, Claude 3-8 s, Ollama `qwen2.5vl:3b` about 20-25 s per
+  image measured on an M-series MacBook Air (no discrete GPU). `processing_ms` is reported.
 
 ### 3.1 Extractor interface (`core/extractors/base.py`)
 
@@ -184,11 +184,16 @@ present; never guess a dose) and one **user instruction** that includes the OCR 
   {"role": "user", "content": instruction, "images": [image_jpeg]}],
   format=RawPrescription.model_json_schema(), options={"temperature": 0})`;
   parse with `RawPrescription.model_validate_json(response.message.content)`.
-- `OLLAMA_MODEL` default `qwen3-vl:4b` (3.3 GB; `qwen3-vl:2b` for weaker machines; requires
-  Ollama >= 0.12.7). The schema is also included as text in the instruction, as Ollama's docs
-  recommend.
+- `OLLAMA_MODEL` default `qwen2.5vl:3b` (3.2 GB, non-reasoning; `qwen2.5vl:7b` on machines
+  with spare RAM). The schema is also included as text in the instruction, as Ollama's docs
+  recommend. The call sets `num_ctx=8192` (Ollama's 4096 default cannot hold an image plus the
+  prompt and answer), `num_predict=4096`, and `think=False` only for models that list the
+  `thinking` capability.
+- `qwen3-vl` (the original choice) was rejected after live runs: under Ollama's JSON-schema
+  output it reasons until the token budget is exhausted and returns empty content
+  (`done_reason="length"`), even with `think=False` and a larger context.
 - Errors: connection refused -> "Ollama is not running (start it with `ollama serve`)"; model
-  missing -> "Run `ollama pull qwen3-vl:4b`"; invalid JSON -> one retry, then `ExtractorError`.
+  missing -> "Run `ollama pull qwen2.5vl:3b`"; invalid JSON -> one retry, then `ExtractorError`.
 
 No automatic cross-backend fallback: the configured backend failing is reported, so cost and
 privacy expectations never change silently.
@@ -310,7 +315,7 @@ Existing `scans` tables are untouched.
 | `CLAUDE_MODEL` | `claude-opus-5-5` | any current Claude model id |
 | `ANTHROPIC_API_KEY` | - | read by the SDK |
 | `OLLAMA_HOST` | `http://127.0.0.1:11434` | Ollama server |
-| `OLLAMA_MODEL` | `qwen3-vl:4b` | vision model tag |
+| `OLLAMA_MODEL` | `qwen2.5vl:3b` | local vision model tag (non-reasoning) |
 | `EXTRACT_MAX_IMAGE_SIDE` | `1600` | downscale limit in pixels |
 | `OCR_HINT_FOR_PRINTED` | `true` | send EasyOCR text to the model for printed images |
 | `CONFIDENCE_FLAG_THRESHOLD` | `0.6` | below this the website highlights the field |
@@ -389,3 +394,6 @@ New pinned dependencies: `anthropic`, `ollama`, `rapidfuzz`, `fastapi`, `uvicorn
 5. The dataset `paraloq/json_data_extraction` is used only as schema inspiration and a few
    text-to-JSON test cases (text-only, synthetic, research-only licence note).
 6. LiLT (option 4) is deferred to phase 3 and trained on synthetic data only.
+7. The default local model is `qwen2.5vl:3b`, not `qwen3-vl:4b`: measured during phase 1,
+   the reasoning model never produced JSON under structured output while the non-reasoning
+   model answered correctly in about 22 s per image.

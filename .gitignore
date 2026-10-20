@@ -33,3 +33,6 @@ web/.env.*
 
 # Archify working folders (finished diagrams live in docs/diagrams/)
 .archify/
+
+# shared domain module (copied from the RemindRx monorepo)
+shared/node_modules/

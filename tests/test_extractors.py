@@ -142,9 +142,25 @@ def test_claude_health_reports_missing_credentials():
 
 # ------------------------------------------------------------------ Ollama
 class _FakeOllamaClient:
-    def __init__(self, contents=(), errors=(), models=("qwen3-vl:4b",)):
+    def __init__(
+        self,
+        contents=(),
+        errors=(),
+        models=("qwen3-vl:4b",),
+        capabilities=("vision", "thinking"),
+        show_error=None,
+    ):
         self.contents, self.errors, self.models = list(contents), list(errors), models
+        self.capabilities = list(capabilities)
+        self.show_error = show_error
         self.calls = []
+        self.show_calls = 0
+
+    def show(self, model):
+        self.show_calls += 1
+        if self.show_error is not None:
+            raise self.show_error
+        return {"capabilities": self.capabilities}
 
     def chat(self, **kwargs):
         self.calls.append(kwargs)
@@ -177,6 +193,24 @@ def test_ollama_extract_uses_schema_image_and_zero_temperature():
     assert call["messages"][1]["images"] == [IMAGE]
     assert '"medications"' in call["messages"][1]["content"]
     assert extractor.name == "ollama"
+
+
+def test_ollama_sends_think_only_to_thinking_models():
+    good = json.dumps(RAW)
+    plain = _FakeOllamaClient(contents=[good, good], capabilities=["vision"])
+    extractor = OllamaExtractor("qwen2.5vl:3b", "http://127.0.0.1:11434", client=plain)
+    extractor.extract(IMAGE, None)
+    extractor.extract(IMAGE, None)
+    assert all("think" not in call for call in plain.calls)
+    assert plain.show_calls == 1, "capabilities are looked up once and cached"
+
+    thinking = _FakeOllamaClient(contents=[good], capabilities=["vision", "thinking"])
+    OllamaExtractor("qwen3-vl:4b", "http://127.0.0.1:11434", client=thinking).extract(IMAGE, None)
+    assert thinking.calls[0]["think"] is False
+
+    unknown = _FakeOllamaClient(contents=[good], show_error=RuntimeError("show failed"))
+    OllamaExtractor("x", "http://127.0.0.1:11434", client=unknown).extract(IMAGE, None)
+    assert "think" not in unknown.calls[0], "when capabilities cannot be read, do not send think"
 
 
 def test_ollama_invalid_json_is_retried_once():

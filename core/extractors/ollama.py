@@ -19,6 +19,9 @@ _TIMEOUT_SECONDS = 600
 # Reasoning models (qwen3-vl) otherwise spend the whole output budget "thinking" and return
 # an empty answer with done_reason="length"; keep thinking off and leave room for the JSON.
 _NUM_PREDICT = 4096
+# Ollama's default context window is 4096 tokens; an image alone costs over a thousand, so
+# the prompt plus answer would not fit without raising it.
+_NUM_CTX = 8192
 
 
 def _optional(obj: Any, key: str) -> Any:
@@ -46,6 +49,7 @@ class OllamaExtractor:
         self.model = model
         self.host = host.rstrip("/")
         self._client = client
+        self._supports_thinking: bool | None = None
 
     def _get_client(self) -> Any:
         if self._client is None:
@@ -53,6 +57,18 @@ class OllamaExtractor:
 
             self._client = ollama.Client(host=self.host, timeout=_TIMEOUT_SECONDS)
         return self._client
+
+    def _thinking_capable(self, client: Any) -> bool:
+        """True when Ollama lists the `thinking` capability for the model (checked once)."""
+        if self._supports_thinking is None:
+            try:
+                info = client.show(self.model)
+                capabilities = _field(info, "capabilities")
+                self._supports_thinking = "thinking" in {str(c) for c in capabilities}
+            except Exception as exc:
+                log.warning("Could not read capabilities of %s: %s", self.model, exc)
+                self._supports_thinking = False
+        return self._supports_thinking
 
     def _translate(self, exc: Exception) -> ExtractorError:
         import ollama
@@ -98,16 +114,18 @@ class OllamaExtractor:
                 "images": [image_jpeg],
             },
         ]
+        request: dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "format": schema,
+            "options": {"temperature": 0, "num_predict": _NUM_PREDICT, "num_ctx": _NUM_CTX},
+        }
+        if self._thinking_capable(client):
+            request["think"] = False
         hit_limit = False
         for attempt in range(1, _ATTEMPTS + 1):
             try:
-                response = client.chat(
-                    model=self.model,
-                    messages=messages,
-                    format=schema,
-                    think=False,
-                    options={"temperature": 0, "num_predict": _NUM_PREDICT},
-                )
+                response = client.chat(**request)
             except Exception as exc:
                 log.warning("Ollama request failed: %s", exc)
                 raise self._translate(exc) from exc

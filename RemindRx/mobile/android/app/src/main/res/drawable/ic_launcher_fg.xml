@@ -1,0 +1,11 @@
+<!-- RemindRx launcher foreground: a white capsule with a coral half, on teal. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+  <group android:rotation="-45" android:pivotX="54" android:pivotY="54">
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M54,42 L39,42 A12,12 0 0,0 39,66 L54,66 Z"/>
+    <path android:fillColor="#FB7185"
+        android:pathData="M54,42 L69,42 A12,12 0 0,1 69,66 L54,66 Z"/>
+  </group>
+</vector>

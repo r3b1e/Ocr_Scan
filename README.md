@@ -300,24 +300,25 @@ curl -s -F "image=@rx.jpg" -F "backend=ollama" http://127.0.0.1:8000/extract   #
 
 Interactive docs are served at `/docs` (Swagger UI).
 
-### Website integration (`web/`)
+### Website integration (`RemindRx/web/`)
 
-The RemindRx website in `web/` has a **Scan** tab that calls this service:
+The RemindRx monorepo lives in `RemindRx/` (`web/`, `shared/`, `mobile/`, `docs/`). The website
+in `RemindRx/web/` has a **Scan** tab that calls this service; it imports the domain module from
+`RemindRx/shared/` through the `@shared/*` alias.
 
-1. Copy the `shared/` domain module (the one the website imports as `@shared/*`) next to
-   `web/`, i.e. `Ocr-Scan/shared/`. The website does not build without it.
+1. `cd RemindRx/shared && npm install` once, so the shared module's types resolve.
 2. Start the service: `python -m service` (reads `.env`; `API_PORT`, default 8000, this repo's
    local `.env` uses 8765). The Vite dev server origins are allowed through CORS by default
    (`API_CORS_ORIGINS`).
-3. In `web/`, copy `.env.example` to `.env` and set `VITE_EXTRACT_API` to the service URL,
-   then `npm install && npm run dev` (http://localhost:5175).
+3. In `RemindRx/web/`, copy `.env.example` to `.env` and set `VITE_EXTRACT_API` to the service
+   URL, then `npm install && npm run dev` (http://localhost:5175).
 4. Scan tab: take a photo or choose an image, pick the backend (when both are configured),
    press *Read prescription*. Every medicine is shown with its box on the processed image,
    a status (`Looks right` / `Auto-corrected` / `Please check`) and editable values. *Review and
    add* opens the normal Add Medication form pre-filled; nothing is saved until the user
    presses Done, and the corrected values are sent to `POST /feedback`.
 
-Mapping into the website's medication model (`web/src/lib/prescriptionToDraft.ts`): slots
+Mapping into the website's medication model (`RemindRx/web/src/lib/prescriptionToDraft.ts`): slots
 become default times (08:00, 13:00, 18:00, 21:00), `times_per_day` > 1 becomes the
 multi-daily frequency, `duration_days` sets the end date, meal timing maps to before/with/
 after/any, and *when needed* (SOS) turns reminders off.

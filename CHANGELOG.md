@@ -13,9 +13,10 @@
   (the processed JPEG the boxes refer to), and detailed per-extraction logging (OCR confidence,
   hint and raw model JSON at DEBUG, per-medicine statuses).
 
-### Known gap
-- The website imports a `shared/` domain module that is not in this repository; it must be
-  copied next to `web/` before `npm run build` / `npm run dev` work.
+### Repository layout
+- The website now lives in the `RemindRx/` monorepo (`web/`, `shared/`, `mobile/`, `docs/`);
+  `web/` builds against `../shared`. The root `.gitignore` keeps `node_modules`, Android/iOS
+  build output, datasets, model weights, databases, logs, uploads and secrets out of git.
 
 ## 1.1.0 - 2026-10-21 - remainRX prescription extraction (phase 1)
 

@@ -160,7 +160,7 @@ Layers and responsibilities:
 | `database/` | `models.py`, `mysql_repository.py`, `sqlite_repository.py`, `prescription_repository.py`, `db_manager.py` | Repository interfaces, two implementations each, MySQL → SQLite fallback |
 | `service/` | `api.py`, `__main__.py` | HTTP API, CORS, lifespan (OCR warm-up thread), error mapping |
 | `gui/` | `app.py`, panels, views | Desktop UI; Tk touched only from the main thread via a queue |
-| `web/` | `src/screens/ScanPrescription.tsx`, `src/api/extract.ts`, `src/lib/prescriptionToDraft.ts` | Scan tab, typed client, mapping into the website's medication model |
+| `RemindRx/web/` | `src/screens/ScanPrescription.tsx`, `src/api/extract.ts`, `src/lib/prescriptionToDraft.ts` | Scan tab, typed client, mapping into the website's medication model (the monorepo also holds `shared/` and the `mobile/` app) |
 
 Threading model of the desktop tool: the camera thread fills a two-slot queue (newest frame
 wins); one OCR worker thread serialises live preview and scan inference (live frames are dropped
@@ -399,7 +399,7 @@ interval schedule is spread evenly); `times_per_day > 1` becomes the multi-daily
   pages; Claude costs money and sends images to a cloud API (consent and a data-processing
   agreement are required for health data).
 - HEIC photos from iPhones are not decoded; browsers usually convert them on upload.
-- The website needs the external `shared/` module to build.
+- The website builds from the `RemindRx/` monorepo (`web/` + `shared/`); keep both folders together.
 
 ---
 
@@ -421,8 +421,8 @@ interval schedule is spread evenly); `times_per_day > 1` becomes the multi-daily
 .venv/bin/python -m service --port 8765        # http://127.0.0.1:8765/docs
 curl -s -F "image=@tests/fixtures/sample_rx.jpg" http://127.0.0.1:8765/extract | python -m json.tool
 
-# website (needs shared/ next to web/)
-cd web && cp .env.example .env && npm install && npm run dev   # http://localhost:5175 → Scan
+# website (RemindRx monorepo)
+cd RemindRx/web && cp .env.example .env && npm install && npm run dev   # http://localhost:5175 → Scan
 
 # desktop OCR tool
 python main.py
@@ -441,6 +441,6 @@ core/extractors/{base,prompt,claude,ollama}.py                                  
 service/{api,__main__}.py                                                          # FastAPI
 database/{models,mysql_repository,sqlite_repository,prescription_repository,db_manager}.py schema.sql
 data/drug_lexicon_in.csv                                                           # 220 Indian brands
-web/src/screens/ScanPrescription.tsx web/src/api/extract.ts web/src/lib/prescriptionToDraft.ts
+RemindRx/web/src/screens/ScanPrescription.tsx  RemindRx/web/src/api/extract.ts  RemindRx/web/src/lib/prescriptionToDraft.ts
 tests/ (21 files, 390 tests)   notebooks/demo.ipynb   docs/superpowers/{specs,plans}/   CHANGELOG.md
 ```

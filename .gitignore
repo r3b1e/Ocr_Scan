@@ -1,38 +1,153 @@
-# Environment / secrets
+# =============================================================================
+# Ocr-Scan / remainRX .gitignore
+# Keeps secrets, dependencies, build output, caches, datasets, model weights,
+# runtime data and health-related images out of GitHub. Only source, docs,
+# tests, fixtures and the drug lexicon are meant to be committed.
+# =============================================================================
+
+# ---- Secrets and local configuration ---------------------------------------
 .env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+!**/debug.keystore
+**/local.properties
+secrets/
+credentials*.json
+service-account*.json
+
+# ---- Python -----------------------------------------------------------------
 .venv/
 venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+notebooks/.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 
-# Runtime output (data/ keeps the drug lexicon and gold set tracked)
+# ---- Node / web / React Native (any depth) ---------------------------------
+**/node_modules/
+**/dist/
+**/.vite/
+**/.cache/
+**/.parcel-cache/
+**/.turbo/
+**/.next/
+**/.expo/
+**/.expo-shared/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp.*
+.yarn/cache/
+.yarn/install-state.gz
+
+# ---- Android / iOS build output (RemindRx/mobile) ---------------------------
+**/android/build/
+**/android/app/build/
+**/android/.gradle/
+**/android/.cxx/
+**/android/app/.cxx/
+**/.kotlin/
+**/*.hprof
+**/*.apk
+**/*.aab
+**/*.ipa
+**/ios/Pods/
+**/ios/build/
+**/DerivedData/
+**/xcuserdata/
+**/*.xcuserstate
+**/.xcode.env.local
+
+# ---- Runtime output of the OCR tool and the extraction service --------------
 captures/
 exports/
 logs/
+*.log
+# data/: keep the drug lexicon and the gold-set JSON, drop everything generated
 data/*
 !data/drug_lexicon_in.csv
 !data/gold/
+# uploaded prescription photos are personal health data: never push them
+data/documents/
+data/gold/**/*.jpg
+data/gold/**/*.jpeg
+data/gold/**/*.png
+data/gold/**/*.heic
+data/gold/**/*.webp
+*.sqlite3
+*.sqlite
+*.db
 
-# Python
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.ruff_cache/
+# ---- Datasets, model weights, training artefacts ----------------------------
+datasets/
+dataset/
+models/
+checkpoints/
+weights/
+runs/
+wandb/
+mlruns/
+training/runs/
+training/checkpoints/
+training/data/
+training/synthetic/out/
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
+*.h5
+*.hdf5
+*.pb
+*.tflite
+*.npz
+*.npy
+*.parquet
+*.arrow
+*.pkl
+*.joblib
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
 
-# Notebooks
-notebooks/.ipynb_checkpoints/
-
-# OS / IDE
-.DS_Store
-.vscode/
-.idea/
-
-# remainRX website (separate project living next to the service)
-web/node_modules/
-web/dist/
-web/.env
-web/.env.*
-
-# Archify working folders (finished diagrams live in docs/diagrams/)
+# ---- Agent tooling and diagram working folders ------------------------------
 .archify/
+.agents/
+.claude/
+skills-lock.json
 
-# shared domain module (copied from the RemindRx monorepo)
-shared/node_modules/
+# ---- OS / editor ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
